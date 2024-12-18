@@ -41,6 +41,34 @@ userRouter.get("/user/getUserData", userAuth, async (req, resp) => {
 
 })
 
+// api to delete the user in DB
+userRouter.delete("/user/deleteUser", userAuth, async (req, resp) => {
+    try {
+        const userData = req.user
+        const userId = req.user._id
+        if (userId) {
+            await User.findByIdAndDelete({ _id: userId })
+        } else {
+            throw new Error("Id not found")
+        }
+        resp.json({ message: `${userData.firstName} user deleted successfully` })
+    } catch (err) {
+        resp.status(400).send("something went wrong while deleting user")
+    }
+})
+
+// api to update the user Data
+userRouter.patch("/user/updateUser", userAuth, async (req, resp) => {
+    try {
+        const actualuserData = req.user
+        const newData = req.body;
+        await User.findByIdAndUpdate({ _id: actualuserData._id },newData)
+        resp.json({ message: `${actualuserData.firstName}'s data has updated successfully` })
+    } catch {
+        resp.status(400).send("something went wrong while updating user")
+    }
+})
+
 
 
 module.exports = userRouter
