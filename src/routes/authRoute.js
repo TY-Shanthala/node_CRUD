@@ -18,7 +18,12 @@ authRoute.post("/login", async (req, resp) => {
       const token = jwt.sign({ id: userGmail._id }, "SAJJAN@!23");
       // save the token in resp cookies
       resp
-        .cookie("token", token)
+        .cookie("token", token, {
+        //   httpOnly: true, // Prevents JavaScript access (more secure)
+          secure: true, // Required for HTTPS (Cloudflare requires it)
+          sameSite: "None", // Required for cross-origin requests
+          path: "/", // Ensures the cookie is available on all routes
+        })
         .send({ message: "Logedin successfully", token: token });
     }
   } catch (err) {
